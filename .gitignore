@@ -6,3 +6,5 @@ ed/data/medrecon.csv
 ed/data/pyxis.csv
 ed/data/vitalsign.csv
 .idea/
+.idea/
+.DS_Store
