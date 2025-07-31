@@ -17,3 +17,4 @@ This repository contains scripts and figures for analyzing false emergency depar
 - `04_bounce_back.py` – Analyzes 72-hour bounce-back events  
 - `05_diagnosis_analysis.py` – Breaks down patterns by diagnosis
 
+Note: Some data files (e.g., `vitalsign.csv`, `medrecon.csv`) are excluded from version control due to file size limits. Place them in `/data/` to enable full script functionality.
