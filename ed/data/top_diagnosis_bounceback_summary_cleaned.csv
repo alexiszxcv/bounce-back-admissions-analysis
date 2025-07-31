@@ -1,0 +1,11 @@
+ICD Prefix,Description,Count of False Admissions,Bounce-Backs,Bounce-Back Rate
+250,Diabetes-related problems,5904,288,0.04878048780487805
+401,Hypertension,8743,381,0.043577719318311794
+780,"General symptoms (fever, etc.)",9892,485,0.04902951880307319
+786,"Chest pain, breathing issues",6595,356,0.053980288097043215
+789,Abdominal pain (ICD-9),5797,357,0.06158357771260997
+E88,Metabolic disorders,3787,139,0.03670451544758384
+R06,Shortness of breath,4186,114,0.027233635929288104
+R07,Chest pain (ICD-10),4231,199,0.04703379815646419
+R10,Abdominal pain (ICD-10),5983,248,0.04145077720207254
+R41,Cognitive disturbances,3391,143,0.04217045119433795
