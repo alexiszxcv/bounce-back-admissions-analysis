@@ -116,9 +116,8 @@ Race/Ethnicity
 ```
 *Shows the distribution of ED visits and bounce-back rates across racial and ethnic groups. Highlights that certain populations (e.g., Black, Native Hawaiian/Pacific Islander) have higher rates of adverse outcomes, exposing persistent gaps in care and outcome equity.*
 
-Interpretation:
-******Table 1 reveals that bounce-back rates are not uniform across patient groups. Racial and ethnic disparities are evident, with some populations—such as Black and Native Hawaiian/Pacific Islander patients—experiencing substantially higher rates of ED revisits and hospital admissions. This quantifies the scope of inequity and pinpoints where the greatest gaps in outcomes exist, emphasizing the need for focused attention on these vulnerable groups.
-******
+Table 1 reveals that bounce-back rates are not uniform across patient groups. Racial and ethnic disparities are evident, with some populations—such as Black and Native Hawaiian/Pacific Islander patients—experiencing substantially higher rates of ED revisits and hospital admissions. This quantifies the scope of inequity and pinpoints where the greatest gaps in outcomes exist, emphasizing the need for focused attention on these vulnerable groups.
+
 
 ## 5. Data Processing Details
 
