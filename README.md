@@ -39,6 +39,7 @@ Validation and quality assessment in `02_visualize_false_admissions.py` performs
 The primary bounce-back analysis in `04_bounce_back.py` serves as the analytical engine, performing fundamental cohort construction and outcome quantification. This script categorizes each patient into one of four mutually exclusive groups, computes ED revisit rates, bounce-back admission rates, and overlap percentages, examines time-to-event patterns and seasonal variations, and generates standardized CSV files for downstream analysis.
 
 Key metrics calculated include:
+
 • ED Revisit Rate = (ED Only + Both) / Total ED Visits × 100%
 • Bounce-Back Admission Rate = (Admit Only + Both) / Total ED Visits × 100%  
 • Overlap Rate = Both / (ED Only + Admit Only + Both) × 100%
