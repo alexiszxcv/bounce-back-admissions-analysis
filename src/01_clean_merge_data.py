@@ -1,7 +1,7 @@
 import pandas as pd
 
-edstays = pd.read_csv('edstays.csv', parse_dates=['intime', 'outtime'])
-vitals = pd.read_csv('vitalsign.csv', parse_dates=['charttime'])
+edstays = pd.read_csv('data/edstays.csv', parse_dates=['intime', 'outtime'])
+vitals = pd.read_csv('data/vitalsign.csv', parse_dates=['charttime'])
 
 # Calculate ED length of stay and flag false admissions
 edstays['ed_los_hours'] = (edstays['outtime'] - edstays['intime']).dt.total_seconds() / 3600

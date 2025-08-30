@@ -1,0 +1,33 @@
+Table 2. Top Diagnoses Associated with Bounce-back Events
+================================================================================
+
+
+ED Revisit (Top 10)
+----------------------------------------
+ICD Code     Description                           Events    Total    Rate%
+--------------------------------------------------------------------------------
+5362         PERSISTENT VOMITING                        6       18     33.3
+G932         Benign intracranial hypertension           5       18     27.8
+29410        DEMENTIA IN CONDITIONS CLASSIFIED ELSEWHERE WITHOU...        4       16     25.0
+L0501        Pilonidal cyst with abscess               16       67     23.9
+L02212       Cutaneous abscess of back [any part, except buttoc...        7       33     21.2
+28262        HB-SS DISEASE W/CRISIS                     8       39     20.5
+F39          Unspecified mood [affective] disorder        2       10     20.0
+A047         Enterocolitis due to Clostridium difficile        2       10     20.0
+T360X5A      Adverse effect of penicillins, initial encounter        2       10     20.0
+N401         Benign prostatic hyperplasia with lower urinary tr...        2       10     20.0
+
+Bounce Back Admission (Top 10)
+----------------------------------------
+ICD Code     Description                           Events    Total    Rate%
+--------------------------------------------------------------------------------
+30301        AC ALCOHOL INTOX-CONTIN                    4       11     36.4
+5362         PERSISTENT VOMITING                        5       18     27.8
+V536         FITTING URINARY DEVICES                    3       14     21.4
+T361X5A      Adverse effect of cephalospor/oth beta-lactm antib...        2       10     20.0
+5712         ALCOHOL CIRRHOSIS LIVER                    3       15     20.0
+R159         Full incontinence of feces                 2       10     20.0
+25061        DIAB NEURO MANIF IDDM                      3       16     18.8
+99673        DUE TO RENAL DIALYSIS DEVICE,IMPLANT,GRAFT        3       16     18.8
+7866         CHEST SWELLING/MASS/LUMP                   2       11     18.2
+K3184        Gastroparesis                              6       33     18.2

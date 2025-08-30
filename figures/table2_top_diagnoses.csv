@@ -1,0 +1,23 @@
+Outcome_Type,ICD_Code,Description,Events,Total,Rate_Percent
+SECTION,ED Revisit (Top 10),,,,
+ED,5362,PERSISTENT VOMITING,6,18,33.3
+ED,G932,Benign intracranial hypertension,5,18,27.8
+ED,29410,DEMENTIA IN CONDITIONS CLASSIFIED ELSEWHERE WITHOU...,4,16,25.0
+ED,L0501,Pilonidal cyst with abscess,16,67,23.9
+ED,L02212,"Cutaneous abscess of back [any part, except buttoc...",7,33,21.2
+ED,28262,HB-SS DISEASE W/CRISIS,8,39,20.5
+ED,F39,Unspecified mood [affective] disorder,2,10,20.0
+ED,A047,Enterocolitis due to Clostridium difficile,2,10,20.0
+ED,T360X5A,"Adverse effect of penicillins, initial encounter",2,10,20.0
+ED,N401,Benign prostatic hyperplasia with lower urinary tr...,2,10,20.0
+SECTION,Bounce Back Admission (Top 10),,,,
+Readmit,30301,AC ALCOHOL INTOX-CONTIN,4,11,36.4
+Readmit,5362,PERSISTENT VOMITING,5,18,27.8
+Readmit,V536,FITTING URINARY DEVICES,3,14,21.4
+Readmit,T361X5A,Adverse effect of cephalospor/oth beta-lactm antib...,2,10,20.0
+Readmit,5712,ALCOHOL CIRRHOSIS LIVER,3,15,20.0
+Readmit,R159,Full incontinence of feces,2,10,20.0
+Readmit,25061,DIAB NEURO MANIF IDDM,3,16,18.8
+Readmit,99673,"DUE TO RENAL DIALYSIS DEVICE,IMPLANT,GRAFT",3,16,18.8
+Readmit,7866,CHEST SWELLING/MASS/LUMP,2,11,18.2
+Readmit,K3184,Gastroparesis,6,33,18.2

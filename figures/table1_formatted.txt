@@ -1,0 +1,15 @@
+Table 1. Patient Characteristics and Outcome Rates
+============================================================
+
+Overall
+  Total ED Visits            208,578      2.6      1.8
+
+Race/Ethnicity
+  American Indian or Alaska Native      465      2.2      1.3
+  Asian                       10,885      2.6      1.1
+  Black or African American   52,816      2.9      1.8
+  Hispanic or Latino          21,792      2.5      1.5
+  Native Hawaiian or Pacific Islander      227      3.5      1.8
+  Other                       12,451      2.2      1.0
+  Unknown                      1,530      0.4      0.8
+  White                      108,412      2.5      2.0

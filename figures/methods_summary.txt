@@ -1,0 +1,29 @@
+METHODS SUMMARY
+==================================================
+
+Study Design: Retrospective cohort study
+
+Setting: Emergency department visits from MIMIC-IV database
+
+Participants: Adult patients (≥18 years) discharged from the emergency department
+
+Exposures: Patient demographics (age, sex, race/ethnicity), primary diagnosis
+
+Outcomes:
+- Primary: ED revisit within 72 hours of discharge
+- Secondary: Hospital bounce back admission within 72 hours of ED discharge
+- Tertiary: Combined outcome (either revisit or bounce back admission)
+
+Statistical Analysis:
+- Descriptive statistics for patient characteristics
+- Time-to-event analysis with cumulative incidence curves
+- Multivariable logistic regression for risk factors
+- Seasonal pattern analysis using heatmaps
+- Subgroup analyses by demographics and diagnosis
+
+Data Processing:
+- Race categories standardized to 8 major groups
+- Age groups: 18-34, 35-49, 50-64, 65-79, 80+ years
+- Diagnosis analysis limited to conditions with ≥10 cases and ≥2 events
+- Time trends analyzed monthly over study period
+

@@ -3,9 +3,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 
 # Load diagnosis and ED merged data
-dx = pd.read_csv('diagnosis.csv')  # or 'diagnoses_icd.csv'
-ed = pd.read_csv('ed_merged.csv')
-bounces = pd.read_csv('false_admissions_with_bouncebacks.csv')
+dx = pd.read_csv('data/diagnosis.csv') 
+ed = pd.read_csv('data/ed_merged.csv')
+bounces = pd.read_csv('data/false_admissions_with_bouncebacks.csv')
 
 # Prepare diagnosis codes
 dx['icd_prefix'] = dx['icd_code'].astype(str).str[:3]
