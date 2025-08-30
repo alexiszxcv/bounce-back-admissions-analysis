@@ -54,8 +54,8 @@ Additional components include automated report generation in `07_generate_report
 ### Output Organization
 
 The repository generates three main output categories:
-• All visualizations including cumulative incidence curves, forest plots for risk factors, patient flow diagrams, summary statistics tables, and correlation analysis plots
-• Primary analysis results in overlap_standard.csv, demographic summaries, diagnosis breakdowns, and time trends calculations  
+- All visualizations including cumulative incidence curves, forest plots for risk factors, patient flow diagrams, summary statistics tables, and correlation analysis plots
+- Primary analysis results in overlap_standard.csv, demographic summaries, diagnosis breakdowns, and time trends calculations  
 
 ## 4. Key Figures 
 
