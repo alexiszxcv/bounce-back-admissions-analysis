@@ -141,7 +141,7 @@ To fully execute the analysis and generate all outputs (figures, tables, and rep
 
 1. **Set Up the Environment**
    - Ensure you have Python 3.8+ installed.
-   - (Recommended) Create a virtual environment:
+   - Create a virtual environment:
      ```bash
      python3 -m venv .venv
      source .venv/bin/activate
