@@ -101,167 +101,6 @@ def create_patient_flow_diagram():
     plt.savefig(OUT / "patient_flow_diagram.png", dpi=300, bbox_inches='tight')
     plt.close()
 
-def create_kaplan_meier_style_plot():
-    """Create survival-style curves for time to bounce-back/revisit"""
-    
-    # Load monthly data to simulate time-to-event
-    df_ed = pd.read_csv(CSV_DIR / "ed_bounceback_monthly.csv")
-    df_readmit = pd.read_csv(CSV_DIR / "readmit_monthly.csv")
-    
-    # Convert to datetime
-    df_ed['month_date'] = pd.to_datetime(df_ed['month']) - pd.DateOffset(years=89)
-    df_readmit['month_date'] = pd.to_datetime(df_readmit['month']) - pd.DateOffset(years=89)
-    
-    # Sort by date
-    df_ed = df_ed.sort_values('month_date')
-    df_readmit = df_readmit.sort_values('month_date')
-    
-    # Calculate cumulative event rates
-    df_ed['cumulative_rate'] = df_ed['rate'].cumsum() / len(df_ed)
-    df_readmit['cumulative_rate'] = df_readmit['rate'].cumsum() / len(df_readmit)
-    
-    # Create figure
-    fig, ax = plt.subplots(figsize=(12, 8))
-    
-    # Plot cumulative incidence
-    ax.plot(df_ed['month_date'], df_ed['cumulative_rate']*100, 
-            linewidth=3, color='#e74c3c', label='ED Revisit', marker='o', markersize=4)
-    ax.plot(df_readmit['month_date'], df_readmit['cumulative_rate']*100, 
-            linewidth=3, color='#3498db', label='Bounce Back Admission', marker='s', markersize=4)
-    
-    ax.set_title('Cumulative Incidence of Adverse Outcomes Over Time', fontsize=16, fontweight='bold', pad=20)
-    ax.set_xlabel('Study Period', fontsize=14, fontweight='bold')
-    ax.set_ylabel('Cumulative Incidence (%)', fontsize=14, fontweight='bold')
-    
-    # Format x-axis
-    ax.xaxis.set_major_locator(mdates.YearLocator())
-    ax.xaxis.set_minor_locator(mdates.MonthLocator([1, 7]))
-    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y'))
-    
-    ax.grid(True, alpha=0.3)
-    ax.legend(fontsize=12, loc='upper left')
-    
-    # Add confidence intervals (simulated)
-    for df, color, label in [(df_ed, '#e74c3c', 'ED'), (df_readmit, '#3498db', 'Readmit')]:
-        # Simple confidence interval simulation
-        ci_lower = df['cumulative_rate'] * 0.9 * 100
-        ci_upper = df['cumulative_rate'] * 1.1 * 100
-        ax.fill_between(df['month_date'], ci_lower, ci_upper, alpha=0.2, color=color)
-    
-    # Add at-risk table simulation
-    fig.text(0.1, 0.02, 'Note: Cumulative incidence calculated from monthly revisit and bounce back admission rates', 
-             fontsize=10, style='italic')
-    
-    plt.tight_layout()
-    plt.savefig(OUT / "cumulative_incidence_curves.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
-def create_forest_plot():
-    """Create a forest plot showing risk factors for bounce-back"""
-    
-    # Load race data for both outcomes
-    df_ed_race = pd.read_csv(CSV_DIR / "ed_bounceback_by_race.csv", index_col=0)
-    df_readmit_race = pd.read_csv(CSV_DIR / "readmit_by_race.csv", index_col=0)
-    
-    # Calculate relative risks (using White as reference)
-    white_ed_rate = df_ed_race.loc['White', 'rate'] if 'White' in df_ed_race.index else df_ed_race['rate'].mean()
-    white_readmit_rate = df_readmit_race.loc['White', 'rate'] if 'White' in df_readmit_race.index else df_readmit_race['rate'].mean()
-    
-    # Calculate relative risks for each race
-    risk_factors = []
-    for race in df_ed_race.index:
-        if race != 'White' and pd.notna(df_ed_race.loc[race, 'rate']):
-            ed_rr = df_ed_race.loc[race, 'rate'] / white_ed_rate
-            readmit_rr = df_readmit_race.loc[race, 'rate'] / white_readmit_rate
-            
-            # Simulate confidence intervals
-            ed_ci_lower = ed_rr * 0.8
-            ed_ci_upper = ed_rr * 1.2
-            readmit_ci_lower = readmit_rr * 0.8
-            readmit_ci_upper = readmit_rr * 1.2
-            
-            risk_factors.append({
-                'factor': f'{race} vs White',
-                'outcome': 'ED Revisit',
-                'rr': ed_rr,
-                'ci_lower': ed_ci_lower,
-                'ci_upper': ed_ci_upper
-            })
-            
-            risk_factors.append({
-                'factor': f'{race} vs White',
-                'outcome': 'Bounce Back Admission',
-                'rr': readmit_rr,
-                'ci_lower': readmit_ci_lower,
-                'ci_upper': readmit_ci_upper
-            })
-    
-    df_forest = pd.DataFrame(risk_factors)
-    
-    # Create forest plot
-    fig, ax = plt.subplots(figsize=(12, 8))
-    
-    # Separate by outcome
-    ed_data = df_forest[df_forest['outcome'] == 'ED Revisit'].copy()
-    readmit_data = df_forest[df_forest['outcome'] == 'Bounce Back Admission'].copy()
-    
-    y_positions = []
-    labels = []
-    
-    y_pos = 0
-    for _, row in ed_data.iterrows():
-        # Plot point estimate
-        ax.scatter(row['rr'], y_pos, s=100, color='#e74c3c', marker='o', zorder=3)
-        # Plot confidence interval
-        ax.plot([row['ci_lower'], row['ci_upper']], [y_pos, y_pos], 
-                color='#e74c3c', linewidth=3, alpha=0.7, zorder=2)
-        
-        labels.append(f"{row['factor']} (ED)")
-        y_positions.append(y_pos)
-        y_pos += 1
-    
-    # Add space between outcomes
-    y_pos += 0.5
-    
-    for _, row in readmit_data.iterrows():
-        # Plot point estimate
-        ax.scatter(row['rr'], y_pos, s=100, color='#3498db', marker='s', zorder=3)
-        # Plot confidence interval
-        ax.plot([row['ci_lower'], row['ci_upper']], [y_pos, y_pos], 
-                color='#3498db', linewidth=3, alpha=0.7, zorder=2)
-        
-        labels.append(f"{row['factor']} (Readmit)")
-        y_positions.append(y_pos)
-        y_pos += 1
-    
-    # Reference line at RR = 1
-    ax.axvline(x=1, color='black', linestyle='--', alpha=0.5, zorder=1)
-    
-    # Formatting
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(labels)
-    ax.set_xlabel('Relative Risk (95% CI)', fontsize=14, fontweight='bold')
-    ax.set_title('Risk Factors for ED Revisit and Bounce Back Admission by Race/Ethnicity', 
-                fontsize=16, fontweight='bold', pad=20)
-    
-    ax.grid(True, alpha=0.3, axis='x')
-    ax.set_xlim(0.5, 2.0)
-    
-    # Add legend
-    from matplotlib.lines import Line2D
-    legend_elements = [Line2D([0], [0], marker='o', color='w', markerfacecolor='#e74c3c', markersize=10, label='ED Revisit'),
-                      Line2D([0], [0], marker='s', color='w', markerfacecolor='#3498db', markersize=10, label='Bounce Back Admission')]
-    ax.legend(handles=legend_elements, loc='upper right', fontsize=12)
-    
-    # Add interpretation text
-    ax.text(0.02, 0.98, 'RR > 1: Increased risk\nRR < 1: Decreased risk', 
-            transform=ax.transAxes, va='top', ha='left', fontsize=10,
-            bbox=dict(boxstyle='round,pad=0.3', facecolor='white', alpha=0.8))
-    
-    plt.tight_layout()
-    plt.savefig(OUT / "forest_plot_risk_factors.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
 def create_correlation_matrix():
     """Create a correlation matrix of key variables"""
     
@@ -407,12 +246,6 @@ def main():
         create_patient_flow_diagram()
         print("✓ Patient flow diagram created")
         
-        create_kaplan_meier_style_plot()
-        print("✓ Cumulative incidence curves created")
-        
-        create_forest_plot()
-        print("✓ Forest plot created")
-        
         create_correlation_matrix()
         print("✓ Correlation analysis created")
         
@@ -425,14 +258,12 @@ def main():
         plot_files = list(OUT.glob("*.png"))
         if plot_files:
             print("\nGenerated plots:")
-            academic_plots = [
+            plots = [
                 "patient_flow_diagram.png",
-                "cumulative_incidence_curves.png", 
-                "forest_plot_risk_factors.png",
                 "correlation_analysis.png",
                 "summary_statistics_table.png"
             ]
-            for plot in academic_plots:
+            for plot in plots:
                 if (OUT / plot).exists():
                     print(f"  - {plot}")
         
