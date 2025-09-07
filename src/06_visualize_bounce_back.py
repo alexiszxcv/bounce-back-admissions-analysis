@@ -474,192 +474,6 @@ def create_summary_dashboard():
     plt.savefig(OUT / "bounce_back_dashboard.png", dpi=300, bbox_inches='tight')
     plt.close()
 
-def plot_academic_analyses():
-    """Generate additional academic-quality visualizations"""
-    
-    # 1. Risk stratification matrix (age vs race for bounce back)
-    plot_risk_stratification()
-    
-    # 2. Survival/Kaplan-Meier style curves
-    plot_time_to_event_curves()
-    
-    # 3. Forest plot for odds ratios by demographic groups
-    plot_forest_plot()
-    
-    # 4. Seasonal/temporal heatmap
-    plot_seasonal_heatmap()
-    
-    # 5. Length of stay vs bounce-back correlation
-    plot_los_correlation()
-
-def plot_risk_stratification():
-    """Create risk stratification heatmap"""
-    # Try to create a combined risk matrix
-    age_file = CSV_DIR / "readmit_by_age.csv"
-    race_file = CSV_DIR / "readmit_by_race.csv"
-    
-    if age_file.exists() and race_file.exists():
-        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-        
-        # Age group risks
-        df_age = pd.read_csv(age_file, index_col=0)
-        bars1 = ax1.bar(range(len(df_age)), df_age['rate']*100, 
-                       color='steelblue', alpha=0.7)
-        ax1.set_title('Bounce Back Risk by Age Group', fontweight='bold', fontsize=14)
-        ax1.set_ylabel('Bounce Back Rate (%)')
-        ax1.set_xlabel('Age Group')
-        ax1.set_xticks(range(len(df_age)))
-        ax1.set_xticklabels(df_age.index, rotation=45)
-        
-        # Add confidence intervals (approximated)
-        for i, (idx, row) in enumerate(df_age.iterrows()):
-            rate = row['rate']
-            n_events = row['n']
-            n_total = row['d']
-            
-            # Simple binomial confidence interval
-            import math
-            if n_total > 0:
-                se = math.sqrt(rate * (1-rate) / n_total)
-                ci_lower = max(0, (rate - 1.96*se)) * 100
-                ci_upper = min(1, (rate + 1.96*se)) * 100
-                ax1.errorbar(i, rate*100, yerr=[[rate*100-ci_lower], [ci_upper-rate*100]], 
-                           capsize=5, color='black', alpha=0.7)
-        
-        # Race group risks
-        df_race = pd.read_csv(race_file, index_col=0)
-        bars2 = ax2.barh(range(len(df_race)), df_race['rate']*100, 
-                        color='coral', alpha=0.7)
-        ax2.set_title('Bounce Back Risk by Race/Ethnicity', fontweight='bold', fontsize=14)
-        ax2.set_xlabel('Bounce Back Rate (%)')
-        ax2.set_ylabel('Race/Ethnicity')
-        ax2.set_yticks(range(len(df_race)))
-        ax2.set_yticklabels(df_race.index)
-        
-        # Add sample sizes
-        for i, (idx, row) in enumerate(df_race.iterrows()):
-            rate = row['rate'] * 100
-            n_events = int(row['n'])
-            n_total = int(row['d'])
-            ax2.text(rate + 0.1, i, f'{rate:.1f}% (n={n_events}/{n_total})', 
-                    va='center', fontsize=9)
-        
-        plt.tight_layout()
-        plt.savefig(OUT / "risk_stratification_analysis.png", dpi=300, bbox_inches='tight')
-        plt.close()
-
-def plot_time_to_event_curves():
-    """Create time-to-event style visualization"""
-    # Since we don't have individual-level time-to-event data, 
-    # create a cumulative incidence plot based on available data
-    
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    
-    # Simulate cumulative incidence curves for different groups
-    days = range(1, 31)  # 30-day follow-up
-    
-    # ED bounce-back cumulative incidence (simulated based on 3-day rate)
-    ed_rate_3d = 0.026  # 2.6% from our analysis
-    ed_daily_hazard = -np.log(1-ed_rate_3d)/3  # Convert to daily hazard
-    
-    # Different risk groups (based on our demographic analysis)
-    groups = {
-        'High Risk (Age 65+)': ed_daily_hazard * 1.3,
-        'Medium Risk (Age 35-64)': ed_daily_hazard,
-        'Low Risk (Age 18-34)': ed_daily_hazard * 0.7
-    }
-    
-    colors = ['red', 'orange', 'green']
-    
-    for i, (group, hazard) in enumerate(groups.items()):
-        survival_prob = [np.exp(-hazard * d) for d in days]
-        cumulative_incidence = [(1 - s) * 100 for s in survival_prob]
-        ax1.plot(days, cumulative_incidence, label=group, linewidth=2, 
-                color=colors[i], marker='o', markersize=3)
-    
-    ax1.set_title('Cumulative ED Revisit Incidence by Risk Group', fontweight='bold')
-    ax1.set_xlabel('Days Since Discharge')
-    ax1.set_ylabel('Cumulative Incidence (%)')
-    ax1.legend()
-    ax1.grid(True, alpha=0.3)
-    
-    # Similar for Bounce Back Admission
-    readmit_rate_3d = 0.018  # 1.8% from our analysis
-    readmit_daily_hazard = -np.log(1-readmit_rate_3d)/3
-    
-    readmit_groups = {
-        'High Risk (Comorbid)': readmit_daily_hazard * 1.5,
-        'Medium Risk (Standard)': readmit_daily_hazard,
-        'Low Risk (Young/Healthy)': readmit_daily_hazard * 0.6
-    }
-    
-    for i, (group, hazard) in enumerate(readmit_groups.items()):
-        survival_prob = [np.exp(-hazard * d) for d in days]
-        cumulative_incidence = [(1 - s) * 100 for s in survival_prob]
-        ax2.plot(days, cumulative_incidence, label=group, linewidth=2, 
-                color=colors[i], marker='s', markersize=3)
-    
-    ax2.set_title('Cumulative Bounce Back Incidence by Risk Group', fontweight='bold')
-    ax2.set_xlabel('Days Since Discharge')
-    ax2.set_ylabel('Cumulative Incidence (%)')
-    ax2.legend()
-    ax2.grid(True, alpha=0.3)
-    
-    plt.tight_layout()
-    plt.savefig(OUT / "cumulative_incidence_curves.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
-def plot_forest_plot():
-    """Create forest plot showing odds ratios for different risk factors"""
-    fig, ax = plt.subplots(figsize=(12, 8))
-    
-    # Example odds ratios and confidence intervals (would be calculated from actual data)
-    risk_factors = [
-        'Age 65+ vs 18-34',
-        'Age 50-64 vs 18-34', 
-        'Age 35-49 vs 18-34',
-        'Male vs Female',
-        'Black vs White',
-        'Hispanic vs White',
-        'Asian vs White',
-        'Other Race vs White'
-    ]
-    
-    # These would be calculated from actual logistic regression
-    # For now, using representative values based on literature
-    odds_ratios = [1.4, 1.2, 1.1, 0.9, 1.3, 1.1, 0.8, 1.0]
-    ci_lower = [1.1, 1.0, 0.9, 0.8, 1.1, 0.9, 0.6, 0.8]
-    ci_upper = [1.8, 1.5, 1.3, 1.1, 1.6, 1.4, 1.1, 1.3]
-    
-    y_positions = range(len(risk_factors))
-    
-    # Plot points and error bars
-    ax.errorbar(odds_ratios, y_positions, 
-               xerr=[np.array(odds_ratios) - np.array(ci_lower), 
-                     np.array(ci_upper) - np.array(odds_ratios)],
-               fmt='o', markersize=8, capsize=5, capthick=2, 
-               color='darkblue', ecolor='gray')
-    
-    # Add vertical line at OR = 1
-    ax.axvline(x=1, color='red', linestyle='--', alpha=0.7, linewidth=2)
-    
-    # Formatting
-    ax.set_yticks(y_positions)
-    ax.set_yticklabels(risk_factors)
-    ax.set_xlabel('Odds Ratio (95% CI)', fontsize=12)
-    ax.set_title('Forest Plot: Risk Factors for Bounce Back\n(Adjusted Odds Ratios)', 
-                fontweight='bold', fontsize=14)
-    ax.grid(True, alpha=0.3)
-    
-    # Add odds ratio values as text
-    for i, (or_val, lower, upper) in enumerate(zip(odds_ratios, ci_lower, ci_upper)):
-        ax.text(max(ci_upper) + 0.1, i, f'{or_val:.1f} ({lower:.1f}-{upper:.1f})', 
-               va='center', fontsize=10)
-    
-    plt.tight_layout()
-    plt.savefig(OUT / "forest_plot_risk_factors.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
 def plot_seasonal_heatmap():
     """Create seasonal heatmap of bounce-back rates"""
     ed_monthly = CSV_DIR / "ed_bounceback_monthly.csv"
@@ -702,53 +516,6 @@ def plot_seasonal_heatmap():
         plt.savefig(OUT / "seasonal_heatmap.png", dpi=300, bbox_inches='tight')
         plt.close()
 
-def plot_los_correlation():
-    """Plot length of stay vs bounce-back correlation (if LOS data available)"""
-    # This would require LOS data - for now create a conceptual plot
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(16, 6))
-    
-    # Simulated data showing relationship between LOS and bounce-back
-    los_hours = np.array([0.5, 1, 2, 4, 6, 8, 12, 24, 48, 72])
-    
-    # Theoretical U-shaped relationship: very short and very long stays have higher bounce-back
-    bounce_back_rates = np.array([8.5, 6.2, 3.1, 2.1, 1.8, 2.0, 2.4, 3.2, 4.8, 7.1])
-    readmit_rates = np.array([3.2, 2.1, 1.4, 1.2, 1.5, 1.8, 2.2, 3.1, 4.5, 6.8])
-    
-    # ED revisit vs LOS
-    ax1.plot(los_hours, bounce_back_rates, 'ro-', linewidth=2, markersize=6, 
-            label='ED Revisit')
-    ax1.set_xlabel('Length of Stay (hours)')
-    ax1.set_ylabel('Revisit Rate (%)')
-    ax1.set_title('ED Revisit Rate vs Length of Stay', fontweight='bold')
-    ax1.grid(True, alpha=0.3)
-    ax1.set_xscale('log')
-    
-    # Add trend line
-    z = np.polyfit(np.log(los_hours), bounce_back_rates, 2)
-    p = np.poly1d(z)
-    x_trend = np.logspace(np.log10(0.5), np.log10(72), 100)
-    ax1.plot(x_trend, p(np.log(x_trend)), 'r--', alpha=0.7, label='Trend')
-    ax1.legend()
-    
-    # Bounce Back vs LOS
-    ax2.plot(los_hours, readmit_rates, 'bo-', linewidth=2, markersize=6, 
-            label='Bounce Back')
-    ax2.set_xlabel('Length of Stay (hours)')
-    ax2.set_ylabel('Bounce Back Rate (%)')
-    ax2.set_title('Bounce Back Rate vs Length of Stay', fontweight='bold')
-    ax2.grid(True, alpha=0.3)
-    ax2.set_xscale('log')
-    
-    # Add trend line
-    z2 = np.polyfit(np.log(los_hours), readmit_rates, 2)
-    p2 = np.poly1d(z2)
-    ax2.plot(x_trend, p2(np.log(x_trend)), 'b--', alpha=0.7, label='Trend')
-    ax2.legend()
-    
-    plt.tight_layout()
-    plt.savefig(OUT / "los_correlation_analysis.png", dpi=300, bbox_inches='tight')
-    plt.close()
-
 def main():
     """Main function to generate all visualizations"""
     print("Generating bounce-back analysis visualizations...")
@@ -757,7 +524,7 @@ def main():
     OUT.mkdir(exist_ok=True)
     
     try:
-        # Generate all plots
+        # Generate all plots based
         load_and_plot_overlap()
         print("✓ Overlap visualizations created")
         
@@ -770,8 +537,8 @@ def main():
         plot_diagnosis_analysis()
         print("✓ Diagnosis analysis plots created")
         
-        plot_academic_analyses()
-        print("✓ Academic quality analyses created")
+        plot_seasonal_heatmap()
+        print("✓ Seasonal heatmap created")
         
         create_summary_dashboard()
         print("✓ Summary dashboard created")
